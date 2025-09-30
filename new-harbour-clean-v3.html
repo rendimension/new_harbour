@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Harbour Town Centre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f9f7f4; color: #2a2622; overflow-x: hidden; }
+        .hero { 
+            background: linear-gradient(rgba(249,247,244,0.3), rgba(249,247,244,0.7)), url('https://i.imgur.com/bjuJBS6.jpeg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+        .btn { background: #c9a961; color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s; border: none; cursor: pointer; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2; }
+        @media (min-width: 768px) { .title { font-size: 3.5rem; } }
+        .section { padding: 4rem 0; }
+        .grid-2 { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+        
+        .panoramic {
+            position: relative;
+            min-height: 70vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            margin: 4rem 0;
+        }
+        .panoramic::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.5));
+        }
+        .panoramic-content { 
+            position: relative; 
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 2.5rem;
+            border-radius: 16px;
+        }
+        .panoramic-content .title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: #FFFFFF;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .panoramic-content p {
+            font-size: 1.4rem;
+            line-height: 1.7;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .scroll-gallery {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 2rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: #c9a961 #f9f7f4;
+        }
+        .scroll-gallery::-webkit-scrollbar { height: 8px; }
+        .scroll-gallery::-webkit-scrollbar-track { background: #f9f7f4; border-radius: 10px; }
+        .scroll-gallery::-webkit-scrollbar-thumb { background: #c9a961; border-radius: 10px; }
+        
+        .gallery-item {
+            flex: 0 0 auto;
+            width: 600px;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 95vw; max-height: 95vh; border-radius: 12px; }
+        .close-lightbox {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            color: #2a2622;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header style="position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e5e5;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; padding-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="#c9a961">
+                    <rect x="4" y="18" width="6" height="10" rx="1"/>
+                    <rect x="12" y="14" width="6" height="14" rx="1"/>
+                    <rect x="20" y="10" width="6" height="18" rx="1"/>
+                </svg>
+                <div>
+                    <div style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600;">New Harbour</div>
+                    <div style="font-size: 0.75rem; color: #706a65; text-transform: uppercase; letter-spacing: 0.05em;">Town Centre</div>
+                </div>
+            </div>
+            <a href="#inquire" class="btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Secure your space</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="grid-2" style="align-items: center;">
+                <div>
+                    <span style="display: inline-block; background: rgba(201,169,97,0.9); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1.5rem;">PREMIUM DEVELOPMENT</span>
+                    <h1 class="title" style="color: #2a2622; text-shadow: 0 2px 20px rgba(255,255,255,0.9), 0 4px 40px rgba(255,255,255,0.8);">Secure Your Space at New Harbour Town Centre</h1>
+                    <p style="font-size: 1.25rem; color: #2a2622; margin-bottom: 2rem; text-shadow: 0 2px 15px rgba(255,255,255,0.9), 0 4px 30px rgba(255,255,255,0.8); font-weight: 600;">A modern mixed-use destination at the gateway to Old Harbour—designed for convenience, access, and growth.</p>
+                    <a href="#inquire" class="btn">Secure your space now →</a>
+                    <div style="display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+                        <div><div style="font-size: 2rem; font-weight: 700; color: #c9a961; font-family: 'Playfair Display', serif; text-shadow: 0 2px 10px rgba(255,255,255,0.8);">50+</div><div style="font-size: 0.875rem; color: #2a2622; font-weight: 600; text-shadow: 0 1px 8px rgba(255,255,255,0.9);">Commercial Spaces</div></div>
+                        <div><div style="font-size: 2rem; font-weight: 700; color: #c9a961; font-family: 'Playfair Display', serif; text-shadow: 0 2px 10px rgba(255,255,255,0.8);">40+</div><div style="font-size: 0.875rem; color: #2a2622; font-weight: 600; text-shadow: 0 1px 8px rgba(255,255,255,0.9);">Years Since Last Major Project</div></div>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://i.imgur.com/bjuJBS6.jpeg" alt="Development" style="width: 100%; height: auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="grid-2" style="align-items: center;">
+                <div>
+                    <h2 class="title" style="font-size: 2.25rem;">About the Development</h2>
+                    <p style="color: #706a65; margin-bottom: 1rem; line-height: 1.6;">New Harbour is set to transform Old Harbour into a thriving, modern community while preserving the ease and comfort of its surroundings. The development will introduce a vibrant town centre with 50+ commercial spaces, including a supermarket, pharmacy, restaurants, a bank, medical offices, food stores, and an office park.</p>
+                    <p style="color: #706a65; line-height: 1.6;">With direct access to the new highway, the project offers quick connections to Kingston, Spanish Town, and nearby communities. It is the first major project of its kind in Old Harbour in over 40 years.</p>
+                </div>
+                <div>
+                    <img src="https://i.imgur.com/dpBvlhc.jpeg" alt="Community" style="width: 100%; height: 400px; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: white;">
+        <div class="container">
+            <h2 class="title" style="text-align: center; font-size: 2.25rem; margin-bottom: 3rem;">Key Highlights</h2>
+            <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div style="background: #f9f7f4; padding: 1.5rem; border-radius: 16px;"><h3 style="font-weight: 600; margin-bottom: 0.5rem;">Prime Location</h3><p style="color: #706a65;">Direct highway access for maximum visibility.</p></div>
+                <div style="background: #f9f7f4; padding: 1.5rem; border-radius: 16px;"><h3 style="font-weight: 600; margin-bottom: 0.5rem;">Regional Connectivity</h3><p style="color: #706a65;">Fast connections to Kingston and Spanish Town.</p></div>
+                <div style="background: #f9f7f4; padding: 1.5rem; border-radius: 16px;"><h3 style="font-weight: 600; margin-bottom: 0.5rem;">50+ Commercial Spaces</h3><p style="color: #706a65;">Flexible layouts for retail, services, and offices.</p></div>
+                <div style="background: #f9f7f4; padding: 1.5rem; border-radius: 16px;"><h3 style="font-weight: 600; margin-bottom: 0.5rem;">Generous Parking</h3><p style="color: #706a65;">Ample parking solutions for all tenants.</p></div>
+                <div style="background: #f9f7f4; padding: 1.5rem; border-radius: 16px;"><h3 style="font-weight: 600; margin-bottom: 0.5rem;">Modern Infrastructure</h3><p style="color: #706a65;">Green spaces and contemporary design.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panoramic" style="background-image: url('https://i.imgur.com/SO4q2fN.jpeg');">
+        <div class="panoramic-overlay"></div>
+        <div class="container" style="position: relative; z-index: 2;">
+            <div style="background: rgba(0,0,0,0.7); padding: 2rem 2.5rem; border-radius: 12px; max-width: 700px; display: inline-block;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.75rem; font-weight: 900; margin-bottom: 0.75rem; color: #FFFFFF;">Experience After Dark</h2>
+                <p style="font-size: 1.25rem; line-height: 1.6; font-weight: 500; color: #FFFFFF;">New Harbour comes alive at night with stunning architectural lighting and a vibrant evening atmosphere.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="panoramic" style="background-image: url('https://i.imgur.com/4U3v3LO.jpeg');">
+        <div class="panoramic-overlay"></div>
+        <div class="container" style="position: relative; z-index: 2;">
+            <div style="background: rgba(0,0,0,0.7); padding: 2rem 2.5rem; border-radius: 12px; max-width: 700px; display: inline-block;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.75rem; font-weight: 900; margin-bottom: 0.75rem; color: #FFFFFF;">Premium Retail Mix</h2>
+                <p style="font-size: 1.25rem; line-height: 1.6; font-weight: 500; color: #FFFFFF;">Modern commercial spaces designed to attract premier brands and create a world-class destination.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="title" style="text-align: center; font-size: 2.25rem; margin-bottom: 3rem;">Dining & Entertainment</h2>
+            <div class="grid-2">
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                    <img src="https://i.imgur.com/sShbGdZ.png" alt="Food Court" style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;">
+                </div>
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                    <img src="https://i.imgur.com/ctjpI7V.jpeg" alt="Retail" style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: white;">
+        <div class="container">
+            <h2 class="title" style="text-align: center; font-size: 2.25rem; margin-bottom: 2rem;">What's Coming</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;">
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Supermarket</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Pharmacy</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Food stores</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Restaurants & cafés</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Bank & insurance</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Medical offices</span>
+                <span style="background: #f9f7f4; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; border: 1px solid #e5e5e5;">Office park</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section">
+        <div class="container">
+            <h2 class="title" style="text-align: center; font-size: 2.25rem; margin-bottom: 1rem;">Development Gallery</h2>
+            <p style="text-align: center; color: #706a65; margin-bottom: 2rem;">Scroll horizontally to explore • Click to enlarge</p>
+            <div class="scroll-gallery">
+                <div class="gallery-item" onclick="openLightbox(0)"><img src="https://i.imgur.com/XNMHFIQ.png" alt="Evening Plaza"></div>
+                <div class="gallery-item" onclick="openLightbox(1)"><img src="https://i.imgur.com/SRapfPJ.jpeg" alt="Hi-Lo Supermarket"></div>
+                <div class="gallery-item" onclick="openLightbox(2)"><img src="https://i.imgur.com/BZzrTht.png" alt="Restaurant Area"></div>
+                <div class="gallery-item" onclick="openLightbox(3)"><img src="https://i.imgur.com/0p8kYIY.jpeg" alt="Retail Plaza"></div>
+                <div class="gallery-item" onclick="openLightbox(4)"><img src="https://i.imgur.com/E1qkv7E.jpeg" alt="Commercial Walkway"></div>
+                <div class="gallery-item" onclick="openLightbox(5)"><img src="https://i.imgur.com/nNzG443.png" alt="Food Court"></div>
+                <div class="gallery-item" onclick="openLightbox(6)"><img src="https://i.imgur.com/SO4q2fN.jpeg" alt="Night View"></div>
+                <div class="gallery-item" onclick="openLightbox(7)"><img src="https://i.imgur.com/4U3v3LO.jpeg" alt="Retail Mix"></div>
+                <div class="gallery-item" onclick="openLightbox(8)"><img src="https://i.imgur.com/sShbGdZ.png" alt="Food Court Evening"></div>
+                <div class="gallery-item" onclick="openLightbox(9)"><img src="https://i.imgur.com/ctjpI7V.jpeg" alt="Retail Evening"></div>
+                <div class="gallery-item" onclick="openLightbox(10)"><img src="https://i.imgur.com/dpBvlhc.jpeg" alt="Community"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: white;">
+        <div class="container">
+            <div class="grid-2">
+                <div>
+                    <h2 class="title" style="font-size: 2.25rem;">Location & Access</h2>
+                    <p style="color: #706a65; margin-bottom: 1rem;">Located in Thetford Park, with immediate access to the new highway for fast links to Kingston, Spanish Town, and surrounding communities.</p>
+                    <p style="color: #706a65;">~35–45 min to Kingston (traffic-dependent).</p>
+                </div>
+                <div style="border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                    <iframe width="100%" height="400" style="border: 0;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15293!2d-76.9!3d17.95!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8edb3e123456789%3A0x123456789!2sOld%20Harbour%2C%20Jamaica!5e0!3m2!1sen!2sus"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="inquire" class="section">
+        <div class="container" style="max-width: 800px;">
+            <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <h2 class="title" style="text-align: center; font-size: 2.25rem;">Leasing & Inquiries</h2>
+                <p style="text-align: center; color: #706a65; margin-bottom: 2rem;">Ready to secure your space? Get in touch with us today.</p>
+                <form style="display: grid; gap: 1rem;">
+                    <div class="grid-2">
+                        <input type="text" placeholder="Full Name *" required style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                        <input type="text" placeholder="Company" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                    </div>
+                    <div class="grid-2">
+                        <input type="email" placeholder="Email *" required style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                        <input type="tel" placeholder="Phone" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                    </div>
+                    <div class="grid-2">
+                        <input type="text" placeholder="Unit Type/Size" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                        <input type="text" placeholder="Business Type" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                    </div>
+                    <input type="text" placeholder="Move-In Timing" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;">
+                    <textarea placeholder="Message" rows="4" style="padding: 0.75rem; border: 1px solid #e5e5e5; border-radius: 8px;"></textarea>
+                    <button type="submit" class="btn">Secure your space now</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: white; padding: 3rem 0; border-top: 1px solid #e5e5e5;">
+        <div class="container">
+            <p style="margin-bottom: 1rem;">Leasing inquiries: <a href="mailto:domonique.jones@infinitehouses.com" style="color: #c9a961; font-weight: 600; text-decoration: none;">domonique.jones@infinitehouses.com</a></p>
+            <p style="font-size: 0.875rem; color: #706a65;">Renderings and information are conceptual and subject to change without notice.</p>
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <button class="close-lightbox" onclick="closeLightbox()">Close ✕</button>
+        <img id="lightboxImg" src="" alt="Gallery">
+    </div>
+
+    <script>
+        const images = [
+            'https://i.imgur.com/XNMHFIQ.png',
+            'https://i.imgur.com/SRapfPJ.jpeg',
+            'https://i.imgur.com/BZzrTht.png',
+            'https://i.imgur.com/0p8kYIY.jpeg',
+            'https://i.imgur.com/E1qkv7E.jpeg',
+            'https://i.imgur.com/nNzG443.png',
+            'https://i.imgur.com/SO4q2fN.jpeg',
+            'https://i.imgur.com/4U3v3LO.jpeg',
+            'https://i.imgur.com/sShbGdZ.png',
+            'https://i.imgur.com/ctjpI7V.jpeg',
+            'https://i.imgur.com/dpBvlhc.jpeg'
+        ];
+
+        function openLightbox(i) {
+            document.getElementById('lightbox').classList.add('active');
+            document.getElementById('lightboxImg').src = images[i];
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            window.addEventListener('load', () => {
+                // Parallax más pronunciado en secciones panorámicas
+                gsap.utils.toArray('.panoramic').forEach(section => {
+                    gsap.to(section, {
+                        backgroundPositionY: '30%',
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: 1
+                        }
+                    });
+                });
+
+                // Fade in para el contenido de las secciones panorámicas
+                gsap.utils.toArray('.panoramic-content').forEach(content => {
+                    gsap.from(content, {
+                        y: 80,
+                        opacity: 0,
+                        duration: 1.2,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: content,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>
