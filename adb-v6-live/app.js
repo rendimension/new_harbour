@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded',()=>{
-  const drive=(id)=>`https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
+  const drive=(id)=>`https://drive.google.com/thumbnail?id=${id}&sz=w1448`;
   const A={
     wordmarkBlack:drive('1eoE6sQwrIGBjb7VUR7OwqlaZWUYpoXQ8'),
     wordmarkWhite:drive('1xGDr1s3AcR30Qw6loROI7kK7YHQCbD2m'),
